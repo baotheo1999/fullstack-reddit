@@ -51,7 +51,7 @@ const Navbar = () => {
   }
 
   return (
-    <Box bgGradient="linear(to-l, #7928CA,#FF0080)" p={4}>
+    <Box bg="tan" p={4}>
       <Flex maxW={1000} justifyContent="space-between" m="auto" align="center">
         <NextLink href="/">
           <Heading>Reddit</Heading>

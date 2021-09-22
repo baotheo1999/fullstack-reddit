@@ -9,17 +9,16 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { GetStaticProps } from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import NextLink from "next/link";
 import Layout from "../components/Layout";
 import PostDeleteEditButon from "../components/PostDeleteEditButon";
-import { PostsDocument, useMeQuery, usePostsQuery } from "../generated/graphql";
+import UpvoteSection from "../components/UpvoteSection";
+import { PostsDocument, usePostsQuery } from "../generated/graphql";
 import { addApolloState, initializeApollo } from "../lib/apolloClient.";
 export const limit = 3;
 const Index = () => {
-  const { data: meData } = useMeQuery();
-
-  const { data, loading, error, fetchMore, networkStatus } = usePostsQuery({
+  const { data, loading, fetchMore, networkStatus } = usePostsQuery({
     variables: { limit },
     notifyOnNetworkStatusChange: true,
   });
@@ -39,6 +38,7 @@ const Index = () => {
         <Stack spacing={8}>
           {data?.posts?.paginatePosts.map((post) => (
             <Flex key={post.id} p={5} shadow="md" borderWidth="1px">
+              <UpvoteSection post={post} />
               <Box flex={1}>
                 <NextLink href={`/post/${post.id}`}>
                   <Link>
@@ -77,8 +77,10 @@ const Index = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
-  const apolloClient = initializeApollo();
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const apolloClient = initializeApollo({ headers: context.req.headers });
 
   await apolloClient.query({
     query: PostsDocument,

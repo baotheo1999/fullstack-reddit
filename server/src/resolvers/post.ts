@@ -1,4 +1,4 @@
-import { checkAuth } from "../middleware/checkAuth";
+import { UserInputError } from "apollo-server-core";
 import {
   Arg,
   Ctx,
@@ -12,17 +12,17 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
+import { LessThan } from "typeorm";
 import { Post } from "../entities/Post";
 import { Upvote } from "../entities/Unvote";
+import { User } from "../entities/User";
+import { checkAuth } from "../middleware/checkAuth";
+import { Context } from "../types/Context";
 import { CreatePostInput } from "../types/CreatePostInput";
+import { PaginatePosts } from "../types/PaginatePosts";
 import { PostMutationResponse } from "../types/PostMutationResponse";
 import { UpdatePostInput } from "../types/UpdatePostInput";
-import { User } from "../entities/User";
-import { PaginatePosts } from "../types/PaginatePosts";
-import { LessThan } from "typeorm";
-import { Context } from "../types/Context";
 import { VoteType } from "../types/VoteType";
-import { UserInputError } from "apollo-server-core";
 
 registerEnumType(VoteType, {
   name: "VoteType",
@@ -35,8 +35,31 @@ export class PostResolver {
   }
 
   @FieldResolver((_return) => User)
-  async user(@Root() root: Post) {
-    return await User.findOne(root.userId);
+  async user(
+    @Root() root: Post,
+    @Ctx() { dataLoaders: { userLoader } }: Context
+  ) {
+    // return await User.findOne(root.userId);
+    return await userLoader.load(root.userId);
+  }
+
+  @FieldResolver((_return) => Int)
+  async voteType(
+    @Root() root: Post,
+    @Ctx() { req, dataLoaders: { voteTypeLoader } }: Context
+  ) {
+    if (!req.session.userId) return 0;
+
+    // const existingVote = await Upvote.findOne({
+    //   postId: root.id,
+    //   userId: req.session.userId,
+    // });
+    const existingVote = await voteTypeLoader.load({
+      postId: root.id,
+      userId: req.session.userId,
+    });
+
+    return existingVote ? existingVote.value : 0;
   }
 
   @Mutation((_return) => PostMutationResponse)

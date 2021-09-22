@@ -1,3 +1,4 @@
+import { gql, Reference } from "@apollo/client";
 import { Button } from "@chakra-ui/button";
 import { Box, Flex, Heading, Link } from "@chakra-ui/layout";
 import NextLink from "next/link";
@@ -7,6 +8,7 @@ import {
   useLogoutMutation,
   useMeQuery,
 } from "../generated/graphql";
+
 const Navbar = () => {
   const { data, loading: useMeQueryLoading } = useMeQuery();
   const [logout, { loading: useLogoutMutationLoading }] = useLogoutMutation();
@@ -17,6 +19,28 @@ const Navbar = () => {
           cache.writeQuery<MeQuery>({
             query: MeDocument,
             data: { me: null },
+          });
+
+          cache.modify({
+            fields: {
+              posts(existing) {
+                existing.paginatePosts.forEach((post: Reference) => {
+                  cache.writeFragment({
+                    id: post.__ref,
+                    fragment: gql`
+                      fragment VoteType on Post {
+                        voteType
+                      }
+                    `,
+                    data: {
+                      voteType: 0,
+                    },
+                  });
+                });
+
+                return existing;
+              },
+            },
           });
         }
       },

@@ -38,6 +38,9 @@ export class Post extends BaseEntity {
   points!: number;
 
   @Field()
+  voteType!: number;
+
+  @Field()
   @Column()
   text!: string;
 

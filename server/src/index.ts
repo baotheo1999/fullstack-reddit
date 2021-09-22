@@ -19,7 +19,7 @@ import { UserResolver } from "./resolvers/user";
 import { Context } from "./types/Context";
 
 const main = async () => {
-  await createConnection({
+  const connection = await createConnection({
     type: "postgres",
     database: "redditv3",
     username: process.env.DB_USERNAME_DEV,
@@ -66,7 +66,7 @@ const main = async () => {
       validate: false,
     }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
-    context: ({ req, res }): Context => ({ req, res }),
+    context: ({ req, res }): Context => ({ req, res, connection }),
   });
 
   await apolloServer.start();

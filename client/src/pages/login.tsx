@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/button";
-import { Box, Flex, Spinner, useToast, Link } from "@chakra-ui/react";
+import { Box, Flex, Link, Spinner, useToast } from "@chakra-ui/react";
 import { Form, Formik, FormikHelpers } from "formik";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -26,8 +26,7 @@ const Login = () => {
     password: "",
   };
 
-  const [loginUser, { loading: _loginUserLoading, data, error }] =
-    useLoginMutation();
+  const [loginUser, { loading: _loginUserLoading, error }] = useLoginMutation();
   const onLoginSubmit = async (
     values: LoginInput,
     { setErrors }: FormikHelpers<LoginInput>
@@ -36,13 +35,8 @@ const Login = () => {
       variables: {
         loginInput: values,
       },
-      // fix khi login thì nó k hiển thị logout liền mà pải load lại
+
       update(cache, { data }) {
-        console.log("data login ", data);
-        // const meData = cache.readQuery({
-        //   query: MeDocument,
-        // });
-        // console.log('MEDATA ', meData);
         if (data?.login.success) {
           cache.writeQuery<MeQuery>({
             query: MeDocument,
@@ -51,7 +45,7 @@ const Login = () => {
         }
       },
     });
-    // ? change data kp null undefine run
+
     if (response.data?.login.errors) {
       setErrors(mapFieldErrors(response.data.login.errors));
     } else if (response.data?.login.user) {

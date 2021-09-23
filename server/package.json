@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "build": "rm -rf dist && tsc",
     "start": "node dist/index.js",
     "server": "nodemon dist/index.js",
     "start-ts": "ts-node src/index.ts",
@@ -36,6 +37,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "graphql": "^15.5.1",
+    "mongoose": "^5.13.5",
     "nodemailer": "^6.6.3",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",

@@ -27,7 +27,7 @@ const ChangePassword = () => {
   const { data: authData, loading: authLoading } = useCheckAuth();
   const { query } = useRouter();
   const initialValues = { newPassword: "" };
-  const [changePassword, { loading }] = useChangePasswordMutation();
+  const [changePassword, _] = useChangePasswordMutation();
   const [tokenError, setTokenError] = useState("");
 
   const onChangePasswordSubmit = async (

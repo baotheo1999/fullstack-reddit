@@ -25,7 +25,7 @@ const Register = () => {
     email: "",
   };
 
-  const [registerUser, { loading: _registerUserLoading, data, error }] =
+  const [registerUser, { loading: _registerUserLoading, error }] =
     useRegisterMutation();
   const onRegisterSubmit = async (
     values: RegisterInput,

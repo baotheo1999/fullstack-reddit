@@ -1,4 +1,3 @@
-import { EditIcon } from "@chakra-ui/icons";
 import {
   Alert,
   AlertIcon,
@@ -8,7 +7,6 @@ import {
   Flex,
   Heading,
   Spinner,
-  IconButton,
 } from "@chakra-ui/react";
 import { GetStaticPaths, GetStaticProps } from "next";
 import NextLink from "next/link";
